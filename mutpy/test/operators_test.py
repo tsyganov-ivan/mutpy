@@ -172,7 +172,10 @@ class ArithmeticOperatorReplacementTest(OperatorTestCase):
     def test_mutation_lineno(self):
         self.assert_mutation(
             'pass' + EOL + 'x + y' + EOL + 'x - y',
-            ['pass' + EOL + 'x - y' + EOL + 'x - y', 'pass' + EOL + 'x + y' + EOL + 'x + y'],
+            [
+                'pass' + EOL + 'x - y' + EOL + 'x - y',
+                'pass' + EOL + 'x + y' + EOL + 'x + y'
+            ],
             [2, 3],
         )
 

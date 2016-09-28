@@ -168,6 +168,9 @@ class InjectImporter:
         self.module.__loader__ = self
         sys.modules[fullname] = self.module
 
+    def is_package(self, fullname):
+        return fullname.endswith('.py')
+
     def install(self):
         if isinstance(sys.meta_path[0], self.__class__):
             sys.meta_path[0] = self

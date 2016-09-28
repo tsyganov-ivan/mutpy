@@ -158,10 +158,10 @@ class AbstractSourceGenerator(ast.NodeVisitor):
                 self.visit(default)
         if node.vararg is not None:
             write_comma()
-            self.write('*' + node.vararg)
+            self.write('*' + node.vararg.arg)
         if node.kwarg is not None:
             write_comma()
-            self.write('**' + node.kwarg)
+            self.write('**' + node.kwarg.arg)
 
     def decorators(self, node):
         for decorator in node.decorator_list:
@@ -170,7 +170,6 @@ class AbstractSourceGenerator(ast.NodeVisitor):
             self.visit(decorator)
 
     # Statements
-
     def visit_Assign(self, node):
         self.newline(node)
         for idx, target in enumerate(node.targets):
@@ -185,6 +184,9 @@ class AbstractSourceGenerator(ast.NodeVisitor):
         self.visit(node.target)
         self.write(' ' + BINOP_SYMBOLS[type(node.op)] + '= ')
         self.visit(node.value)
+
+    def visit_NameConstant(self, node):
+        self.write(str(node.value), node)
 
     def visit_ImportFrom(self, node):
         self.newline(node)
@@ -237,11 +239,11 @@ class AbstractSourceGenerator(ast.NodeVisitor):
                 paren_or_comma()
                 self.write(keyword.arg + '=')
                 self.visit(keyword.value)
-            if node.starargs is not None:
+            if hasattr(node, 'starargs') and node.starargs is not None:
                 paren_or_comma()
                 self.write('*')
                 self.visit(node.starargs)
-            if node.kwargs is not None:
+            if hasattr(node, 'kwargs') and node.kwargs is not None:
                 paren_or_comma()
                 self.write('**')
                 self.visit(node.kwargs)
@@ -381,18 +383,24 @@ class AbstractSourceGenerator(ast.NodeVisitor):
             write_comma()
             self.write(keyword.arg + '=')
             self.visit(keyword.value)
-        if node.starargs is not None:
+        if getattr(node, 'starargs', None) is not None:
             write_comma()
             self.write('*')
             self.visit(node.starargs)
-        if node.kwargs is not None:
+        if getattr(node, 'kwargs', None) is not None:
             write_comma()
             self.write('**')
             self.visit(node.kwargs)
         self.write(')')
 
+    def visit_arg(self, node):
+        self.write(node.arg)
+
     def visit_Name(self, node):
-        self.write(node.id, node)
+        if isinstance(node.id, str):
+            self.write(node.id, node)
+        else:
+            self.visit(node.id)
 
     def visit_Str(self, node):
         self.write(repr(node.s))
