@@ -213,16 +213,6 @@ List of MutPy mutation operators sorted by alphabetical order:
 - SCI - super calling insert
 - SIR - slice index remove
 
-Experimental mutation operators:
-
-- CDI - classmethod decorator insertion
-- OIL - one iteration loop
-- RIL - reverse iteration loop
-- SDI - staticmethod decorator insertion
-- SDL - statement deletion
-- SVD - self variable deletion
-- ZIL - zero iteration loop
-
 License
 ~~~~~~~
 
